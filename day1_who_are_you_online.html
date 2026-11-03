@@ -1,0 +1,1048 @@
+<title>Who Are You Online? — Day 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+/* ─── TOKENS ───────────────────────────────────────────
+   Layout: sticky header + tab bar, scrollable panels
+   Color: deep indigo bg, electric violet accent, cool neutrals
+   Type: Syne (display) + DM Sans (body)
+──────────────────────────────────────────────────────── */
+:root {
+  --bg:       #0e0d1a;
+  --surf:     #16152a;
+  --surf2:    #1e1c35;
+  --border:   #2d2b4a;
+  --fg:       #e9e7ff;
+  --muted:    #8a87b0;
+  --accent:   #8b5cf6;
+  --accent2:  #38bdf8;
+  --green:    #34d399;
+  --yellow:   #fbbf24;
+  --red:      #f87171;
+  --white:    #ffffff;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:      #f5f3ff;
+    --surf:    #ffffff;
+    --surf2:   #ede9fe;
+    --border:  #d1caf8;
+    --fg:      #1a1730;
+    --muted:   #6b5fa8;
+    --accent:  #7c3aed;
+    --accent2: #0284c7;
+    --green:   #059669;
+    --yellow:  #d97706;
+    --red:     #dc2626;
+    --white:   #ffffff;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg:#f5f3ff;--surf:#ffffff;--surf2:#ede9fe;--border:#d1caf8;
+  --fg:#1a1730;--muted:#6b5fa8;--accent:#7c3aed;--accent2:#0284c7;
+  --green:#059669;--yellow:#d97706;--red:#dc2626;--white:#ffffff;
+  color-scheme: light;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+  padding-block: 0;
+}
+
+/* PAGE HEADER */
+.page-header {
+  padding-block: 1.75rem 1.25rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  font-size: .68rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: .3rem;
+}
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.7rem,4.5vw,2.6rem);
+  font-weight: 800; line-height: 1.1; text-wrap: balance;
+  color: var(--white);
+}
+.page-title em { font-style: normal; color: var(--accent); }
+.page-sub { font-size: .83rem; color: var(--muted); margin-top: .35rem; }
+
+/* STUDENT BAR */
+.stu-bar {
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding-block: .65rem;
+}
+.stu-inner {
+  display: flex; gap: .6rem; flex-wrap: wrap; align-items: flex-end;
+}
+.stu-field { display: flex; flex-direction: column; gap: .15rem; flex: 1; min-width: 110px; }
+.stu-field label {
+  font-size: .6rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.stu-field input {
+  background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 6px; padding: .38em .65em;
+  font-family: 'DM Sans', sans-serif; font-size: .83rem; color: var(--fg);
+  transition: border-color .15s;
+}
+.stu-field input:focus { outline: none; border-color: var(--accent); }
+.stu-field input::placeholder { color: var(--muted); opacity: .55; }
+
+/* PROGRESS STRIP */
+.prog-strip {
+  background: var(--surf); border-bottom: 1px solid var(--border);
+  padding-block: .4rem;
+}
+.prog-inner { display: flex; align-items: center; gap: .5rem; font-size: .7rem; color: var(--muted); }
+.prog-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background .25s; }
+.prog-dot.done { background: var(--green); }
+.prog-dot.active { background: var(--accent); }
+#prog-label { flex: 1; }
+
+/* TAB BAR */
+.tab-bar {
+  display: flex; background: var(--surf);
+  border-bottom: 2px solid var(--border);
+  position: sticky; top: env(safe-area-inset-top,0px); z-index: 20;
+  overflow-x: auto; scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 1; min-width: 0;
+  padding: .7rem .4rem;
+  border: none; background: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: .72rem; font-weight: 600;
+  color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: color .15s, border-color .15s;
+  display: flex; flex-direction: column; align-items: center; gap: .15rem;
+}
+.tab-btn .ti { font-size: 1.05rem; }
+.tab-btn .tl { font-size: .6rem; letter-spacing: .04em; text-transform: uppercase; }
+.tab-btn:hover { color: var(--fg); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* PANELS */
+.panel { display: none; padding-block: 1.4rem 3rem; }
+.panel.active { display: block; }
+
+/* SECTIONS */
+.card {
+  background: var(--surf); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.2rem; margin-bottom: 1rem;
+}
+.card-head {
+  display: flex; align-items: center; gap: .6rem;
+  padding-bottom: .75rem; margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.card-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.icon-purple { background: rgba(139,92,246,.18); }
+.icon-blue   { background: rgba(56,189,248,.18); }
+.icon-green  { background: rgba(52,211,153,.18); }
+.icon-yellow { background: rgba(251,191,36,.18); }
+.card-title { font-family: 'Syne',sans-serif; font-weight: 700; font-size: .95rem; }
+.card-sub   { font-size: .65rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* CALLOUTS */
+.callout {
+  border-radius: 8px; padding: .7rem .9rem;
+  font-size: .81rem; line-height: 1.55; margin-bottom: .9rem;
+}
+.callout-purple { background: rgba(139,92,246,.1); border-left: 3px solid var(--accent); color: var(--fg); }
+.callout-blue   { background: rgba(56,189,248,.1); border-left: 3px solid var(--accent2); color: var(--fg); }
+.callout-green  { background: rgba(52,211,153,.1); border-left: 3px solid var(--green); color: var(--fg); }
+.callout-yellow { background: rgba(251,191,36,.1); border-left: 3px solid var(--yellow); color: var(--fg); }
+.callout strong { font-weight: 700; }
+
+/* VOCAB GRID */
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: .65rem; margin-bottom: 1rem; }
+.vocab-card {
+  background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .75rem .9rem;
+}
+.vocab-term { font-family: 'Syne',sans-serif; font-weight: 700; font-size: .88rem; color: var(--accent); margin-bottom: .2rem; }
+.vocab-def  { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+/* FILL IN THE BLANK */
+.fitb-block { margin-bottom: 1.1rem; }
+.fitb-q {
+  font-size: .86rem; font-weight: 600; color: var(--fg);
+  margin-bottom: .3rem; line-height: 1.5;
+}
+.fitb-q .blank {
+  display: inline-block; min-width: 120px; border-bottom: 2px solid var(--accent);
+  background: transparent; font-family: 'DM Sans',sans-serif;
+  font-size: .86rem; color: var(--fg); padding: .1em .3em;
+  outline: none; transition: border-color .15s;
+}
+.fitb-q .blank:focus { border-color: var(--accent2); }
+.fitb-hint { font-size: .72rem; font-style: italic; color: var(--muted); margin-top: .15rem; }
+
+/* QUESTIONS */
+.q-block { margin-bottom: 1.1rem; }
+.q-block:last-child { margin-bottom: 0; }
+.q-label { font-size: .84rem; font-weight: 600; color: var(--fg); margin-bottom: .25rem; display: block; }
+.q-hint  { font-size: .72rem; font-style: italic; color: var(--muted); margin-bottom: .35rem; display: block; }
+textarea, input.text-in {
+  width: 100%; background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .6em .8em;
+  font-family: 'DM Sans',sans-serif; font-size: .84rem; color: var(--fg);
+  resize: vertical; min-height: 72px; transition: border-color .15s;
+}
+textarea:focus, input.text-in:focus { outline: none; border-color: var(--accent); }
+textarea::placeholder, input.text-in::placeholder { color: var(--muted); opacity: .55; }
+
+/* STAR RATING */
+.star-row { display: flex; gap: .35rem; align-items: center; margin-bottom: .6rem; flex-wrap: wrap; }
+.star-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--border); transition: color .1s, transform .1s; padding: .05rem; }
+.star-btn.lit { color: var(--yellow); }
+.star-btn:hover { transform: scale(1.15); }
+.star-lbl { font-size: .75rem; color: var(--muted); }
+
+/* PLATFORM CHIPS */
+.chip-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: .45rem; }
+.chip {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .45em .7em; border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; user-select: none;
+  font-size: .8rem; font-weight: 500; background: var(--surf2);
+  transition: border-color .15s, background .15s;
+}
+.chip input[type=checkbox] { display: none; }
+.chip .cdot {
+  width: 14px; height: 14px; border: 2px solid var(--border);
+  border-radius: 4px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, border-color .15s; font-size: 9px; color: #fff;
+}
+.chip.on { border-color: var(--accent); background: rgba(139,92,246,.1); }
+.chip.on .cdot { background: var(--accent); border-color: var(--accent); }
+.chip.on .cdot::after { content: '✓'; }
+
+/* INFLUENCER PICKER */
+.inf-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: .75rem; margin-bottom: 1rem; }
+.inf-card {
+  border: 2px solid var(--border); border-radius: 14px;
+  padding: 1rem .9rem; cursor: pointer; text-align: center;
+  transition: all .18s; background: var(--surf2);
+}
+.inf-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.inf-card.picked { border-color: var(--accent); background: rgba(139,92,246,.12); }
+.inf-avatar { font-size: 2.5rem; margin-bottom: .4rem; }
+.inf-name { font-family: 'Syne',sans-serif; font-weight: 700; font-size: .92rem; margin-bottom: .2rem; }
+.inf-tag { font-size: .68rem; color: var(--muted); }
+.inf-profile {
+  display: none; background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem; margin-bottom: 1rem;
+}
+.inf-profile.show { display: block; }
+.inf-prof-head { display: flex; gap: .75rem; align-items: center; margin-bottom: .75rem; }
+.inf-prof-avatar { font-size: 2.8rem; }
+.inf-prof-name { font-family: 'Syne',sans-serif; font-weight: 800; font-size: 1.05rem; }
+.inf-prof-handle { font-size: .75rem; color: var(--muted); }
+.inf-stat-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .65rem; }
+.inf-stat { background: var(--surf); border: 1px solid var(--border); border-radius: 8px; padding: .35em .7em; font-size: .75rem; }
+.inf-stat strong { font-weight: 700; color: var(--accent); display: block; font-size: .88rem; }
+.inf-bio { font-size: .81rem; color: var(--muted); line-height: 1.55; }
+
+/* MATCHING GAME — inline quiz style */
+.mq-item { background: var(--surf2); border: 2px solid var(--border); border-radius: 10px; padding: .75rem .9rem; margin-bottom: .55rem; transition: border-color .2s; }
+.mq-item.ok  { border-color: var(--green); }
+.mq-item.bad { border-color: var(--red); animation: shk .3s; }
+@keyframes shk { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-5px)} 70%{transform:translateX(5px)} }
+.mq-text { font-size: .82rem; font-weight: 500; line-height: 1.5; margin-bottom: .55rem; }
+.mq-btns { display: flex; gap: .45rem; }
+.mq-btn { flex: 1; padding: .4em .6em; border: 2px solid var(--border); border-radius: 8px; background: none; font-family: 'DM Sans',sans-serif; font-size: .75rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .15s; }
+.mq-btn:hover:not(:disabled) { border-color: var(--fg); color: var(--fg); }
+.mq-btn.active-pick.correct  { background: rgba(52,211,153,.15); border-color: var(--green); color: var(--green); }
+.mq-btn.passive-pick.correct { background: rgba(56,189,248,.15); border-color: var(--accent2); color: var(--accent2); }
+.mq-btn.wrong  { background: rgba(248,113,113,.12); border-color: var(--red); color: var(--red); }
+.mq-btn:disabled { cursor: default; }
+.mq-feedback { font-size: .73rem; margin-top: .4rem; display: none; line-height: 1.45; }
+.mq-feedback.show { display: block; }
+.match-score-box { text-align: center; background: var(--surf2); border: 1px solid var(--border); border-radius: 12px; padding: .9rem 1rem; margin-top: .9rem; }
+.score-big { font-family: 'Syne',sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); }
+.match-reset { display: inline-block; margin-top: .45rem; padding: .45em 1.2em; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-family: 'DM Sans',sans-serif; font-weight: 600; font-size: .8rem; cursor: pointer; transition: opacity .15s; }
+.match-reset:hover { opacity: .85; }
+
+/* PARTNER ACTIVITY */
+.partner-badge {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: rgba(52,211,153,.12); border: 1px solid var(--green);
+  border-radius: 999px; padding: .3em .9em; font-size: .72rem; font-weight: 700;
+  color: var(--green); letter-spacing: .04em; text-transform: uppercase; margin-bottom: .9rem;
+}
+.compare-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: .5rem; margin-bottom: 1rem; }
+.cg-head { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: .35em .5em; }
+.cg-label { font-size: .78rem; font-weight: 600; color: var(--fg); padding: .4em .5em; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
+.cg-cell { padding: .3em .4em; border-bottom: 1px solid var(--border); }
+.cg-cell textarea { min-height: 52px; font-size: .78rem; }
+@media (max-width: 480px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .cg-head:first-child, .cg-label { display: none; }
+}
+
+/* MISC */
+.std-badge { display: inline-block; background: var(--surf2); border: 1px solid var(--border); border-radius: 6px; padding: .18em .6em; font-size: .66rem; font-weight: 600; color: var(--muted); letter-spacing: .02em; margin-bottom: .9rem; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+@media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
+.tag { display: inline-block; padding: .12em .5em; border-radius: 999px; font-size: .64rem; font-weight: 700; text-transform: uppercase; }
+.tag-active  { background: rgba(52,211,153,.15); color: var(--green); }
+.tag-passive { background: rgba(56,189,248,.15); color: var(--accent2); }
+.next-btn { display: block; width: 100%; margin-top: 1.25rem; padding: .75em 1em; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-family: 'DM Sans',sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .15s; text-align: center; }
+.next-btn:hover { opacity: .88; }
+.example-box { background: var(--surf2); border: 1px solid var(--border); border-radius: 10px; padding: .8rem .95rem; margin-bottom: .75rem; font-size: .81rem; }
+.example-box .ex-label { font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: .3rem; }
+.real-example { display: flex; gap: .5rem; margin-bottom: .45rem; font-size: .8rem; line-height: 1.5; }
+.re-icon { flex-shrink: 0; font-size: 1rem; }
+</style>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <p class="eyebrow">🌐 Digital Influencer Academy · Week 5 · Day 1</p>
+  <h1 class="page-title">Who Are You <em>Online?</em></h1>
+  <p class="page-sub">Online Identity &amp; Digital Footprints · MA DLCS Standards 6-8.CAS.b.1 &amp; 6-8.CAS.b.2</p>
+</header>
+
+<!-- STUDENT BAR -->
+<div class="stu-bar">
+  <div class="stu-inner">
+    <div class="stu-field"><label for="sn">Your Name</label><input id="sn" placeholder="First Last" autocomplete="name"></div>
+    <div class="stu-field"><label for="sd">Date</label><input id="sd" placeholder="MM/DD/YYYY"></div>
+    <div class="stu-field"><label for="sp">Period</label><input id="sp" placeholder="Period 3"></div>
+  </div>
+</div>
+
+<!-- PROGRESS STRIP -->
+<div class="prog-strip">
+  <div class="prog-inner">
+    <div class="prog-dot" id="d0"></div>
+    <div class="prog-dot" id="d1"></div>
+    <div class="prog-dot" id="d2"></div>
+    <div class="prog-dot" id="d3"></div>
+    <span id="prog-label">Work through each tab in order</span>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<nav class="tab-bar" role="tablist">
+  <button class="tab-btn active" data-tab="0"><span class="ti">🪞</span><span class="tl">Online Identity</span></button>
+  <button class="tab-btn" data-tab="1"><span class="ti">🦶</span><span class="tl">Digital Footprint</span></button>
+  <button class="tab-btn" data-tab="2"><span class="ti">🔍</span><span class="tl">Investigate</span></button>
+  <button class="tab-btn" data-tab="3"><span class="ti">🤝</span><span class="tl">Partner Activity</span></button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 1 — ONLINE IDENTITY (LEARN IT)
+════════════════════════════════════════════════════ -->
+<div class="panel active" id="p0">
+  <span class="std-badge">📋 DLCS 6-8.CAS.b.1 — Digital Citizenship &amp; Online Identity</span>
+
+  <!-- CONCEPT EXPLAINER -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-purple">🪞</div>
+      <div><div class="card-title">What Is Online Identity?</div><div class="card-sub">The Big Idea</div></div>
+    </div>
+
+    <div class="callout callout-purple">
+      <strong>Your online identity</strong> is everything that represents you on the internet — your posts, comments, profile pictures, usernames, videos, likes, and even what others say about you online. It's the impression people form of you when they look you up.
+    </div>
+
+    <div class="vocab-grid">
+      <div class="vocab-card">
+        <div class="vocab-term">Online Identity</div>
+        <div class="vocab-def">The version of yourself you present on the internet — it can be curated, partial, or very different from who you are in real life.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vocab-term">Digital Persona</div>
+        <div class="vocab-def">A character or image you intentionally create online — like a stage name, avatar, or consistent "brand" across platforms.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vocab-term">Audience</div>
+        <div class="vocab-def">Everyone who can see your content — followers, strangers, future employers, even your grandma. You can't always control who's watching.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vocab-term">Personal Brand</div>
+        <div class="vocab-def">The consistent message and image you build over time. Influencers do this on purpose — but everyone has one, even if they didn't choose it.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vocab-term">First Impression</div>
+        <div class="vocab-def">Online, your first impression is what someone sees when they Google your name or look at your profile before they ever meet you in person.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vocab-term">Permanence</div>
+        <div class="vocab-def">Once something is posted online, it's nearly impossible to fully delete. Screenshots, caches, and reposts can keep it alive forever.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue">
+      <strong>Real vs. Online Self:</strong> Most influencers show a <em>curated</em> version of themselves — the highlights, the best lighting, the funniest moments. That gap between the real person and their online persona is something to think about critically.
+    </div>
+
+    <div class="example-box">
+      <div class="ex-label">Real-World Examples</div>
+      <div class="real-example"><span class="re-icon">🌟</span><span><strong>MrBeast</strong> built a persona around big stunts and charity. His online identity = generous, high-energy, extreme. But he's also a calculated businessman running a media company.</span></div>
+      <div class="real-example"><span class="re-icon">🔬</span><span><strong>Mark Rober</strong> built his identity around being "the science guy who makes it fun." Former NASA engineer — his credibility is a huge part of his brand.</span></div>
+      <div class="real-example"><span class="re-icon">☕</span><span><strong>Emma Chamberlain</strong> built a persona around being unfiltered and real. That authenticity IS her brand — but it's still a carefully built identity.</span></div>
+    </div>
+  </div>
+
+  <!-- FILL IN THE BLANK -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-purple">✏️</div>
+      <div><div class="card-title">Check Your Understanding</div><div class="card-sub">Fill in the Blanks</div></div>
+    </div>
+
+    <div class="fitb-block">
+      <div class="fitb-q">Your <input class="blank" id="f1" placeholder="________"> is everything that represents you on the internet — posts, comments, usernames, and what others say about you.</div>
+      <div class="fitb-hint">Hint: We defined this at the top of the page</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">When a future employer Googles your name before a job interview, the results they see create a <input class="blank" id="f2" placeholder="________"> of you before you ever meet.</div>
+      <div class="fitb-hint">Hint: Something formed quickly when you meet someone new</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">The consistent image and message you build across all your platforms is called your personal <input class="blank" id="f3" placeholder="________">.</div>
+      <div class="fitb-hint">Hint: Companies have these too — think Nike or Apple</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">Once something is posted online, it has <input class="blank" id="f4" placeholder="________"> — meaning it's extremely difficult or impossible to fully delete.</div>
+      <div class="fitb-hint">Hint: Think about how long things last online vs. in real life</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">When an influencer only shows their best moments and filters their life, they are <input class="blank" id="f5" placeholder="________"> their online identity.</div>
+      <div class="fitb-hint">Hint: What do museum curators do to artwork?</div>
+    </div>
+  </div>
+
+  <!-- SHORT RESPONSE -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-purple">💬</div>
+      <div><div class="card-title">Think About It</div><div class="card-sub">Short Response Questions</div></div>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q1a">In your own words, what is the difference between your "real self" and your "online identity"? Can they be the same?</label>
+      <textarea id="q1a" placeholder="Use what you just learned to explain..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q1b">Think about someone you follow online. What impression do you think a stranger would get of them just from their profile or feed? What might be missing from that picture?</label>
+      <textarea id="q1b" placeholder="Think about what they show vs. what they don't show..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q1c">Imagine a college admissions officer looks up your name right now. What would they find? What would be their first impression? (Even if you're not on social media — what COULD they find?)</label>
+      <textarea id="q1c" placeholder="Be honest and specific..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q1d">Why do you think some influencers use a stage name instead of their real name? What are the pros and cons?</label>
+      <span class="q-hint">Think about MrBeast — his real name is Jimmy Donaldson</span>
+      <textarea id="q1d" placeholder="Pros: ___  Cons: ___"></textarea>
+    </div>
+
+    <button class="next-btn" id="next0">Continue to Digital Footprints →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 2 — DIGITAL FOOTPRINT (LEARN IT + GAME)
+════════════════════════════════════════════════════ -->
+<div class="panel" id="p1">
+  <span class="std-badge">📋 DLCS 6-8.CAS.b.2 — Understanding Digital Footprints</span>
+
+  <!-- EXPLAINER -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-blue">🦶</div>
+      <div><div class="card-title">What Is a Digital Footprint?</div><div class="card-sub">The Big Idea</div></div>
+    </div>
+
+    <div class="callout callout-blue">
+      <strong>A digital footprint</strong> is the trail of data you leave behind every time you use the internet. Some of it you leave on purpose. Some of it is collected without you even knowing.
+    </div>
+
+    <div class="two-col">
+      <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.3);border-radius:10px;padding:.85rem;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--green);margin-bottom:.3rem;">🟢 Active Footprint</div>
+        <div style="font-size:.79rem;color:var(--muted);line-height:1.55;margin-bottom:.5rem;">Data you <strong style="color:var(--fg)">intentionally share</strong> — you made a choice to put it out there.</div>
+        <div style="font-size:.77rem;color:var(--muted);line-height:1.7;">
+          • Posting a photo or video<br>
+          • Writing a comment or caption<br>
+          • Filling in your profile info<br>
+          • Tagging someone in a post<br>
+          • Signing up with your real name<br>
+          • Sending a direct message
+        </div>
+      </div>
+      <div style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.3);border-radius:10px;padding:.85rem;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2);margin-bottom:.3rem;">🔵 Passive Footprint</div>
+        <div style="font-size:.79rem;color:var(--muted);line-height:1.55;margin-bottom:.5rem;">Data <strong style="color:var(--fg)">collected about you</strong> — you didn't actively choose to share it.</div>
+        <div style="font-size:.77rem;color:var(--muted);line-height:1.7;">
+          • Your location tracked by an app<br>
+          • Search history saved by Google<br>
+          • Watch history on YouTube<br>
+          • Website cookies stored in your browser<br>
+          • Ads targeted based on what you click<br>
+          • Which posts you scroll past and stop on
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-yellow" style="margin-top:.85rem;">
+      <strong>⚠️ The sneaky part:</strong> You might think you're being careful, but passive data collection happens in the background 24/7 — on every app, every website, and every device you use. Companies use this data to build a profile of you and sell it to advertisers.
+    </div>
+
+    <div class="example-box" style="margin-top:.75rem;">
+      <div class="ex-label">Why It Matters — Real Consequences</div>
+      <div class="real-example"><span class="re-icon">💼</span><span><strong>Jobs:</strong> 70% of employers say they check social media before hiring. Things posted in middle school can show up in a search years later.</span></div>
+      <div class="real-example"><span class="re-icon">🎓</span><span><strong>College:</strong> Some colleges now look at applicants' social media. A single controversial post has gotten students rejected.</span></div>
+      <div class="real-example"><span class="re-icon">💸</span><span><strong>Money:</strong> Your data is worth money. Tech companies profit from selling your behavior profile to advertisers — you're the product.</span></div>
+    </div>
+  </div>
+
+  <!-- FILL IN THE BLANK -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-blue">✏️</div>
+      <div><div class="card-title">Check Your Understanding</div><div class="card-sub">Fill in the Blanks</div></div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">A digital footprint is the trail of <input class="blank" id="f6" placeholder="________"> you leave behind every time you use the internet.</div>
+      <div class="fitb-hint">Hint: Think about what gets collected and stored</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">When you post a photo on Instagram on purpose, you are adding to your <input class="blank" id="f7" placeholder="________"> footprint.</div>
+      <div class="fitb-hint">Hint: You CHOSE to share it</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">When YouTube saves your watch history without you choosing it, that is part of your <input class="blank" id="f8" placeholder="________"> footprint.</div>
+      <div class="fitb-hint">Hint: It happens in the background</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">Companies often use your passive footprint data to show you <input class="blank" id="f9" placeholder="________"> that match your interests and behavior online.</div>
+      <div class="fitb-hint">Hint: Things trying to sell you something</div>
+    </div>
+    <div class="fitb-block">
+      <div class="fitb-q">One reason your digital footprint matters is because <input class="blank" id="f10" placeholder="________"> and <input class="blank" id="f11" placeholder="________"> may look up your name in the future.</div>
+      <div class="fitb-hint">Hint: Two types of people who might Google you someday</div>
+    </div>
+  </div>
+
+  <!-- MATCHING GAME -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-blue">🕵️</div>
+      <div><div class="card-title">Footprint Detective — Matching Game</div><div class="card-sub">Active or Passive?</div></div>
+    </div>
+    <div class="callout callout-blue">
+      For each action below, decide: is it <strong>🟢 Active</strong> (you chose to share it) or <strong>🔵 Passive</strong> (collected in the background)? Answer all 12 to continue!
+    </div>
+    <div id="mq-list"></div>
+    <div class="match-score-box" id="mscore" hidden>
+      <div>You answered <span class="score-big" id="mcnt">0</span> / 12</div>
+      <div id="mmsg" style="font-size:.78rem;color:var(--muted);margin-top:.2rem;"></div>
+      <button class="match-reset" id="mreset">Reset &amp; Try Again</button>
+    </div>
+  </div>
+
+  <!-- REFLECTION -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-blue">💬</div>
+      <div><div class="card-title">Reflect</div><div class="card-sub">Short Response</div></div>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q2a">Which passive footprint example surprised you the most? Explain why it surprised you.</label>
+      <textarea id="q2a" placeholder="I was most surprised by..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q2b">If you could go back and delete 3 things from your digital footprint (real or hypothetical), what would they be and why?</label>
+      <span class="q-hint">No social media? Imagine 3 things you'd NEVER want someone to find about you online someday.</span>
+      <textarea id="q2b" placeholder="1. ___  2. ___  3. ___"></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q2c">A company wants to buy data about what videos you watch, how long you spend on each one, and what you search for afterward. Should they be allowed to? Defend your opinion.</label>
+      <textarea id="q2c" placeholder="I think _____ because..."></textarea>
+    </div>
+    <button class="next-btn" id="next1">Continue to Investigate →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 3 — INVESTIGATE YOUR INFLUENCER
+════════════════════════════════════════════════════ -->
+<div class="panel" id="p2">
+  <span class="std-badge">📋 DLCS 6-8.CAS.b.1 &amp; 6-8.CAS.b.2 — Applied Research</span>
+
+  <div class="callout callout-purple">
+    <strong>Research time!</strong> Pick one of the three influencers below. Use YouTube and Google to find real information about them — then answer the questions based on what you actually discover.
+  </div>
+
+  <!-- INFLUENCER PICKER -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-purple">🎯</div>
+      <div><div class="card-title">Choose Your Influencer</div><div class="card-sub">Pick One to Analyze</div></div>
+    </div>
+    <div class="inf-grid">
+      <div class="inf-card" data-inf="mrbeast">
+        <div class="inf-avatar">🦁</div>
+        <div class="inf-name">MrBeast</div>
+        <div class="inf-tag">Challenges · Charity · Entertainment</div>
+      </div>
+      <div class="inf-card" data-inf="markrober">
+        <div class="inf-avatar">🚀</div>
+        <div class="inf-name">Mark Rober</div>
+        <div class="inf-tag">Science · Engineering · Education</div>
+      </div>
+      <div class="inf-card" data-inf="emma">
+        <div class="inf-avatar">☕</div>
+        <div class="inf-name">Emma Chamberlain</div>
+        <div class="inf-tag">Lifestyle · Authenticity · Fashion</div>
+      </div>
+    </div>
+
+    <!-- Profile cards (shown after picking) -->
+    <div class="inf-profile" id="prof-mrbeast">
+      <div class="inf-prof-head">
+        <div class="inf-prof-avatar">🦁</div>
+        <div>
+          <div class="inf-prof-name">MrBeast</div>
+          <div class="inf-prof-handle">@MrBeast · Real name: Jimmy Donaldson</div>
+        </div>
+      </div>
+      <div class="inf-stat-row">
+        <div class="inf-stat"><strong>300M+</strong>YouTube Subs</div>
+        <div class="inf-stat"><strong>2012</strong>Started</div>
+        <div class="inf-stat"><strong>NC, USA</strong>Home State</div>
+        <div class="inf-stat"><strong>26</strong>Age (born 1998)</div>
+      </div>
+      <div class="inf-bio">Jimmy Donaldson started making YouTube videos at age 13 in his bedroom in Greenville, NC. He spent years studying viral video strategy before breaking through with extreme challenge videos. Today he runs multiple channels, a burger chain (MrBeast Burger), chocolate brand (Feastables), and has given away millions of dollars. His channel is the most-subscribed individual creator on YouTube.</div>
+    </div>
+    <div class="inf-profile" id="prof-markrober">
+      <div class="inf-prof-head">
+        <div class="inf-prof-avatar">🚀</div>
+        <div>
+          <div class="inf-prof-name">Mark Rober</div>
+          <div class="inf-prof-handle">@MarkRober · Former NASA &amp; Apple Engineer</div>
+        </div>
+      </div>
+      <div class="inf-stat-row">
+        <div class="inf-stat"><strong>50M+</strong>YouTube Subs</div>
+        <div class="inf-stat"><strong>2011</strong>Started</div>
+        <div class="inf-stat"><strong>CA, USA</strong>Based</div>
+        <div class="inf-stat"><strong>44</strong>Age (born 1980)</div>
+      </div>
+      <div class="inf-bio">Mark Rober spent 9 years at NASA's Jet Propulsion Lab working on the Mars Curiosity rover, then 4 years at Apple before becoming a full-time YouTuber. He's famous for elaborate engineering projects — glitter bomb packages, squirrel obstacle courses, and science-based stunts. He also runs CrunchLabs, a STEM subscription box for kids, and hosts events like Science Fair to inspire the next generation of engineers.</div>
+    </div>
+    <div class="inf-profile" id="prof-emma">
+      <div class="inf-prof-head">
+        <div class="inf-prof-avatar">☕</div>
+        <div>
+          <div class="inf-prof-name">Emma Chamberlain</div>
+          <div class="inf-prof-handle">@emmachamberlain · Entrepreneur &amp; Podcaster</div>
+        </div>
+      </div>
+      <div class="inf-stat-row">
+        <div class="inf-stat"><strong>12M+</strong>YouTube Subs</div>
+        <div class="inf-stat"><strong>2017</strong>Started</div>
+        <div class="inf-stat"><strong>CA, USA</strong>Based</div>
+        <div class="inf-stat"><strong>23</strong>Age (born 2001)</div>
+      </div>
+      <div class="inf-bio">Emma Chamberlain started posting YouTube vlogs at 16 and quickly became one of the most influential creators in fashion and lifestyle. She's known for raw, unfiltered content that feels less produced than most. She owns Chamberlain Coffee, has a podcast (Anything Goes), and has appeared on Met Gala red carpets as a Louis Vuitton ambassador. She graduated high school early and moved to LA at 17 to pursue content creation full-time.</div>
+    </div>
+  </div>
+
+  <!-- PLATFORM AUDIT -->
+  <div class="card" id="audit-card" style="display:none">
+    <div class="card-head">
+      <div class="card-icon icon-purple">📊</div>
+      <div><div class="card-title">Platform Audit</div><div class="card-sub">Where Are They Active?</div></div>
+    </div>
+    <div class="q-block">
+      <label class="q-label">Which platforms is your influencer active on? Check all you can confirm.</label>
+      <div class="chip-grid" id="plat-chips">
+        <label class="chip"><input type="checkbox" value="YouTube"><span class="cdot"></span>▶️ YouTube</label>
+        <label class="chip"><input type="checkbox" value="Instagram"><span class="cdot"></span>📸 Instagram</label>
+        <label class="chip"><input type="checkbox" value="TikTok"><span class="cdot"></span>🎵 TikTok</label>
+        <label class="chip"><input type="checkbox" value="X/Twitter"><span class="cdot"></span>🐦 X / Twitter</label>
+        <label class="chip"><input type="checkbox" value="Podcast"><span class="cdot"></span>🎙️ Podcast</label>
+        <label class="chip"><input type="checkbox" value="Other"><span class="cdot"></span>➕ Other</label>
+      </div>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3a">What is their primary platform, and approximately how many subscribers/followers do they have there?</label>
+      <span class="q-hint">Go look it up — get a real number!</span>
+      <textarea id="q3a" placeholder="Primary platform: ___   Followers: ___" style="min-height:55px;"></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3b">Describe their content niche. What do they mostly post about, and who is their target audience?</label>
+      <span class="q-hint">Think about age group, interests, why people subscribe</span>
+      <textarea id="q3b" placeholder="Their content is mostly about... Their audience is probably..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3c">How long have they been creating content? What clues helped you figure that out?</label>
+      <span class="q-hint">Look for their oldest videos or posts — check upload dates</span>
+      <textarea id="q3c" placeholder="They've been online since... I figured this out by..."></textarea>
+    </div>
+  </div>
+
+  <!-- IDENTITY DEEP DIVE -->
+  <div class="card" id="identity-card" style="display:none">
+    <div class="card-head">
+      <div class="card-icon icon-purple">🪞</div>
+      <div><div class="card-title">Identity Deep Dive</div><div class="card-sub">Analyzing Their Online Persona</div></div>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3d">In 3–5 words, describe their online persona. What vibe do they give off?</label>
+      <span class="q-hint">Example: "energetic, generous, bigger-than-life, entertaining"</span>
+      <textarea id="q3d" placeholder="Their persona in a few words..." style="min-height:55px;"></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3e">What values does this influencer seem to represent? What messages do they send — on purpose or accidentally?</label>
+      <span class="q-hint">Think about what they stand for, what they avoid, what they celebrate</span>
+      <textarea id="q3e" placeholder="This influencer seems to value... They send the message that..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3f">Find and describe ONE moment where this influencer's online identity and real life seemed to line up authentically. Then ONE moment where there might be a gap between the persona and reality.</label>
+      <span class="q-hint">Do a quick search for "[influencer name] real life" or "[influencer name] controversy"</span>
+      <textarea id="q3f" placeholder="Authentic moment: ___   Gap/tension: ___"></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label">How careful are they with personal information? Rate it:</label>
+      <div class="star-row" id="stars3">
+        <button class="star-btn" data-v="1">★</button><button class="star-btn" data-v="2">★</button>
+        <button class="star-btn" data-v="3">★</button><button class="star-btn" data-v="4">★</button>
+        <button class="star-btn" data-v="5">★</button>
+        <span class="star-lbl" id="slbl3">Tap to rate</span>
+      </div>
+      <textarea id="q3g" placeholder="Back up your rating with a specific example you found..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3h">List 3 pieces of personal information this influencer has shared publicly. Note WHERE you found each one.</label>
+      <span class="q-hint">Examples: city, family members, school, daily routine, home, real name, age</span>
+      <textarea id="q3h" placeholder="1. Info → where I found it&#10;2. Info → where I found it&#10;3. Info → where I found it"></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="q3i">If you searched this influencer's name 5 years from now, what kinds of content do you think would still show up? Why does that matter for their reputation?</label>
+      <textarea id="q3i" placeholder="Five years from now, you'd probably still find... This matters because..."></textarea>
+    </div>
+    <button class="next-btn" id="next2">Continue to Partner Activity →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 4 — PARTNER ACTIVITY
+════════════════════════════════════════════════════ -->
+<div class="panel" id="p3">
+  <span class="std-badge">📋 DLCS 6-8.CAS.b.1 — Collaborative Analysis</span>
+
+  <div class="partner-badge">🤝 Partner Activity</div>
+
+  <div class="callout callout-green">
+    <strong>Find a partner</strong> who analyzed a <em>different</em> influencer than you. If you both picked the same one, one of you will share from the other influencer's profile card. Complete the comparison grid together, then answer the discussion questions.
+  </div>
+
+  <!-- COMPARISON GRID -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-green">📊</div>
+      <div><div class="card-title">Side-by-Side Comparison</div><div class="card-sub">You vs. Your Partner</div></div>
+    </div>
+    <div class="callout callout-green">Fill in <strong>your influencer</strong> in the left column and <strong>your partner's influencer</strong> in the right column.</div>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.8rem;min-width:380px;">
+        <thead>
+          <tr>
+            <th style="padding:.5em;text-align:left;color:var(--muted);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--border);width:32%;">Category</th>
+            <th style="padding:.5em;text-align:left;color:var(--accent);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--border);">Your Influencer</th>
+            <th style="padding:.5em;text-align:left;color:var(--accent2);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--border);">Partner's Influencer</th>
+          </tr>
+        </thead>
+        <tbody id="compare-body">
+          <!-- rows built by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DISCUSSION QUESTIONS -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon icon-green">💬</div>
+      <div><div class="card-title">Discussion Questions</div><div class="card-sub">Talk it out, then write your own answer</div></div>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="p1q1">Discuss with your partner: Which influencer do you think is more careful about their digital footprint? Use at least 2 specific examples to defend your answer.</label>
+      <span class="q-hint">Write YOUR own answer here after discussing — not just what your partner said</span>
+      <textarea id="p1q1" placeholder="I think ___ is more careful because..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="p1q2">Here's one you might disagree on: If an influencer shares their home city online, is that a problem? Argue both sides, then say which side you agree with more.</label>
+      <textarea id="p1q2" placeholder="On one hand... On the other hand... I personally think..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="p1q3">Your partner analyzed a different kind of influencer than you. What is the BIGGEST difference you noticed between the two online identities? What does that tell you about how people build different kinds of brands?</label>
+      <textarea id="p1q3" placeholder="The biggest difference was... This shows me that..."></textarea>
+    </div>
+    <div class="q-block">
+      <label class="q-label" for="p1q4">If YOU were going to build an online identity someday — what content would you make, what persona would you create, and what personal information would you protect? Be specific.</label>
+      <span class="q-hint">No social media? That's fine — imagine a future version of you that wants to put something out there</span>
+      <textarea id="p1q4" placeholder="My content would be about... My persona would be... I would never share..."></textarea>
+    </div>
+  </div>
+
+  <div class="card" id="day1-complete" hidden>
+    <div style="text-align:center;padding:.5rem 0;">
+      <div style="font-size:2.5rem;margin-bottom:.4rem;">🎉</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--green);margin-bottom:.3rem;">Day 1 Complete!</div>
+      <div style="font-size:.83rem;color:var(--muted);">Great work today. Tomorrow you'll take everything you learned and put it to the test in Day 2: Leave No Trace?</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const S = k => { try { return JSON.parse(localStorage.getItem('d1_'+k)) } catch(_){ return null } };
+const W = (k,v) => { try { localStorage.setItem('d1_'+k, JSON.stringify(v)) } catch(_){} };
+
+// Student info
+['sn','sd','sp'].forEach(id => {
+  const el = document.getElementById(id);
+  el.value = S(id) || '';
+  el.addEventListener('input', () => W(id, el.value));
+});
+
+// Tabs
+const tabBtns = [...document.querySelectorAll('.tab-btn')];
+const panels  = [...document.querySelectorAll('.panel')];
+let activeTab = S('tab') || 0;
+
+function goTab(i) {
+  tabBtns.forEach((b,j) => { b.classList.toggle('active',i===j); b.setAttribute('aria-selected',i===j); });
+  panels.forEach((p,j) => p.classList.toggle('active',i===j));
+  activeTab = i; W('tab',i); updateProgress();
+}
+tabBtns.forEach((b,i) => b.addEventListener('click', () => goTab(i)));
+goTab(activeTab);
+
+// Next buttons
+document.getElementById('next0').addEventListener('click', () => goTab(1));
+document.getElementById('next1').addEventListener('click', () => goTab(2));
+document.getElementById('next2').addEventListener('click', () => goTab(3));
+
+// Persist textareas & text inputs
+const allTA = document.querySelectorAll('textarea, input.blank, input.text-in');
+allTA.forEach(el => {
+  const k = el.id;
+  if (!k) return;
+  el.value = S(k) || '';
+  el.addEventListener('input', () => { W(k, el.value); updateProgress(); });
+});
+
+// Platform chips
+const chips = [...document.querySelectorAll('#plat-chips .chip')];
+let plats = S('plats') || [];
+chips.forEach(c => {
+  const cb = c.querySelector('input');
+  if (plats.includes(cb.value)) { c.classList.add('on'); cb.checked = true; }
+  c.addEventListener('click', () => {
+    c.classList.toggle('on');
+    cb.checked = c.classList.contains('on');
+    plats = chips.filter(x=>x.classList.contains('on')).map(x=>x.querySelector('input').value);
+    W('plats', plats); updateProgress();
+  });
+});
+
+// Star rating
+function initStars(contId, storeKey, lblId) {
+  const cont = document.getElementById(contId);
+  if (!cont) return;
+  const btns = [...cont.querySelectorAll('.star-btn')];
+  const lbl  = document.getElementById(lblId);
+  const lbls = ['Not careful at all','A little careful','Somewhat careful','Pretty careful','Very careful!'];
+  let v = S(storeKey) || 0;
+  const render = () => { btns.forEach((b,i) => b.classList.toggle('lit', i<v)); if(lbl) lbl.textContent = v>0 ? lbls[v-1] : 'Tap to rate'; };
+  btns.forEach(b => b.addEventListener('click', () => { v=parseInt(b.dataset.v); W(storeKey,v); render(); }));
+  render();
+}
+initStars('stars3','star3','slbl3');
+
+// Influencer picker
+const INF = {
+  mrbeast:   { name:'MrBeast',           niche:'Challenges & Charity', platform:'YouTube (300M+ subs)', years:'Since 2012' },
+  markrober: { name:'Mark Rober',         niche:'Science & Engineering', platform:'YouTube (50M+ subs)',  years:'Since 2011' },
+  emma:      { name:'Emma Chamberlain',   niche:'Lifestyle & Authenticity', platform:'YouTube (12M+ subs)', years:'Since 2017' }
+};
+let picked = S('inf') || null;
+const infCards = [...document.querySelectorAll('.inf-card')];
+const auditCard = document.getElementById('audit-card');
+const identCard = document.getElementById('identity-card');
+
+function showInf(key) {
+  infCards.forEach(c => c.classList.toggle('picked', c.dataset.inf === key));
+  document.querySelectorAll('.inf-profile').forEach(p => p.classList.remove('show'));
+  if (key) {
+    const prof = document.getElementById('prof-'+key);
+    if (prof) prof.classList.add('show');
+  }
+  auditCard.style.display = key ? 'block' : 'none';
+  identCard.style.display = key ? 'block' : 'none';
+  W('inf', key);
+  buildCompareGrid();
+}
+infCards.forEach(c => c.addEventListener('click', () => { picked=c.dataset.inf; showInf(picked); }));
+if (picked) showInf(picked);
+
+// Comparison grid
+const compareRows = [
+  ['Influencer Name', 'inf-name'],
+  ['Main Platform & Follower Count', 'cmp-plat'],
+  ['Content Niche / Topic', 'cmp-niche'],
+  ['3-Word Persona Description', 'cmp-persona'],
+  ['One value they represent', 'cmp-value'],
+  ['Privacy rating (1–5 ★)', 'cmp-privacy'],
+  ['Biggest risk to their digital footprint', 'cmp-risk'],
+];
+
+function buildCompareGrid() {
+  const body = document.getElementById('compare-body');
+  body.innerHTML = '';
+  compareRows.forEach(([label, key]) => {
+    const tr = document.createElement('tr');
+    const savedMe = S('cmp_me_'+key) || '';
+    const savedP  = S('cmp_p_'+key) || '';
+    tr.innerHTML = `
+      <td style="padding:.4em .5em;border-bottom:1px solid var(--border);font-size:.78rem;font-weight:600;color:var(--muted);vertical-align:top;">${label}</td>
+      <td style="padding:.3em .4em;border-bottom:1px solid var(--border);vertical-align:top;">
+        <textarea style="min-height:44px;font-size:.78rem;" data-ckey="cmp_me_${key}" placeholder="Your answer...">${savedMe}</textarea>
+      </td>
+      <td style="padding:.3em .4em;border-bottom:1px solid var(--border);vertical-align:top;">
+        <textarea style="min-height:44px;font-size:.78rem;" data-ckey="cmp_p_${key}" placeholder="Partner's answer...">${savedP}</textarea>
+      </td>`;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('textarea[data-ckey]').forEach(ta => {
+    ta.addEventListener('input', () => W(ta.dataset.ckey, ta.value));
+  });
+}
+buildCompareGrid();
+
+// MATCHING GAME — inline quiz
+const actions12 = [
+  { text: '📸 Posting a selfie to Instagram', type: 'Active',  explain: 'You chose to post it — that\'s an active footprint.' },
+  { text: '🔍 Googling "best sneakers"',       type: 'Passive', explain: 'Google records your search history in the background without you actively sharing it.' },
+  { text: '💬 Leaving a comment on a YouTube video', type: 'Active', explain: 'You deliberately typed and submitted that comment.' },
+  { text: '📍 An app tracking your location in the background', type: 'Passive', explain: 'The app collects this data without you choosing to share it each time.' },
+  { text: '✍️ Writing your real age on a sign-up form', type: 'Active', explain: 'You filled in that field on purpose — that\'s an active choice.' },
+  { text: '👁️ YouTube saving your watch history', type: 'Passive', explain: 'YouTube logs this automatically. You didn\'t decide to "share" what you watched.' },
+  { text: '🗣️ Tagging a friend in a photo', type: 'Active', explain: 'You made a deliberate decision to tag them.' },
+  { text: '🍪 A website storing cookies when you visit', type: 'Passive', explain: 'Cookies are saved by the site automatically — you didn\'t choose to share that data.' },
+  { text: '📝 Posting a status update about your weekend', type: 'Active', explain: 'You wrote and shared it on purpose — classic active footprint.' },
+  { text: '📈 An app tracking which ads you click on', type: 'Passive', explain: 'Ad trackers record this in the background — you didn\'t opt in to sharing click data.' },
+  { text: '🎮 Creating a username for an online game', type: 'Active', explain: 'You chose that username and put it out there deliberately.' },
+  { text: '⏱️ A streaming site recording how long you pause a video', type: 'Passive', explain: 'The platform collects this behavioral data automatically — you never chose to share it.' },
+];
+
+let mqState = S('mq12') || {}; // { 0: 'Active'|'Passive', ... }
+
+function renderMQ() {
+  const list = document.getElementById('mq-list');
+  list.innerHTML = '';
+  actions12.forEach((a, i) => {
+    const answered = mqState[i];
+    const correct  = answered === a.type;
+    const div = document.createElement('div');
+    div.className = 'mq-item' + (answered ? (correct ? ' ok' : ' bad') : '');
+    div.innerHTML = `
+      <div class="mq-text">${a.text}</div>
+      <div class="mq-btns">
+        <button class="mq-btn active-pick${answered==='Active'?(correct?' correct':' wrong'):''}" data-i="${i}" data-t="Active" ${answered?'disabled':''}>${answered==='Active'&&correct?'✅ Active':'🟢 Active'}</button>
+        <button class="mq-btn passive-pick${answered==='Passive'?(correct?' correct':' wrong'):''}" data-i="${i}" data-t="Passive" ${answered?'disabled':''}>${answered==='Passive'&&correct?'✅ Passive':'🔵 Passive'}</button>
+      </div>
+      <div class="mq-feedback${answered?' show':''}" style="color:${answered?(correct?'var(--green)':'var(--red)'):''}">
+        ${answered ? (correct ? '✅ Correct! ' : '❌ Not quite — ') + a.explain : ''}
+      </div>`;
+    list.appendChild(div);
+  });
+
+  // bind buttons
+  list.querySelectorAll('.mq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.dataset.i);
+      const t = btn.dataset.t;
+      if (mqState[i]) return;
+      mqState[i] = t;
+      W('mq12', mqState);
+      renderMQ();
+      updateMQScore();
+      updateProgress();
+    });
+  });
+
+  updateMQScore();
+}
+
+function updateMQScore() {
+  const answered = Object.keys(mqState).length;
+  const correct  = Object.entries(mqState).filter(([i,t]) => t === actions12[i].type).length;
+  const box = document.getElementById('mscore');
+  if (answered === 0) { box.hidden = true; return; }
+  box.hidden = false;
+  document.getElementById('mcnt').textContent = correct;
+  const msg = document.getElementById('mmsg');
+  if (answered < 12) { msg.textContent = `${answered} / 12 answered so far — keep going!`; msg.style.color = 'var(--muted)'; }
+  else if (correct === 12) { msg.textContent = '🎉 Perfect score! You\'ve mastered footprint detection!'; msg.style.color = 'var(--green)'; }
+  else { msg.textContent = `${correct} / 12 correct — check the red ones above for explanations.`; msg.style.color = 'var(--yellow)'; }
+}
+
+document.getElementById('mreset').addEventListener('click', () => {
+  mqState = {}; W('mq12', mqState); renderMQ();
+});
+renderMQ();
+
+// PROGRESS
+function updateProgress() {
+  const dots = [0,1,2,3].map(i=>document.getElementById('d'+i));
+  // T1: 3+ fill-in-blank filled, 2+ short responses
+  const t1 = ['f1','f2','f3','f4','f5'].filter(id=>(S(id)||'').trim().length>2).length>=3
+           && ['q1a','q1b','q1c','q1d'].filter(id=>(S(id)||'').trim().length>15).length>=2;
+  // T2: blanks + 12 matches + reflections
+  const t2 = Object.values(S('mq12')||{}).length>=10
+           && ['q2a','q2b','q2c'].filter(id=>(S(id)||'').trim().length>15).length>=2;
+  // T3: influencer picked + core questions
+  const t3 = !!S('inf')
+           && ['q3a','q3b','q3d','q3e','q3i'].filter(id=>(S(id)||'').trim().length>10).length>=4;
+  // T4: partner questions
+  const t4 = ['p1q1','p1q2','p1q3','p1q4'].filter(id=>(S(id)||'').trim().length>15).length>=3;
+
+  const arr=[t1,t2,t3,t4];
+  arr.forEach((done,i)=>{
+    dots[i].className='prog-dot'+(done?' done':activeTab===i?' active':'');
+  });
+  const n=arr.filter(Boolean).length;
+  document.getElementById('prog-label').textContent = n===4 ? '🎉 Day 1 complete!' : `${n} / 4 sections complete`;
+  document.getElementById('day1-complete').hidden = n!==4;
+}
+updateProgress();
+</script>
